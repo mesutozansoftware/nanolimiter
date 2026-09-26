@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nanolimiter Shield Control Center</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="glass-card header">
+            <div class="logo-area">
+                <span class="shield-icon">🛡️</span>
+                <div>
+                    <h1>Nanolimiter <span class="badge">v1.0</span></h1>
+                    <p class="subtitle">Ultra-Low RAM DDoS Protection Shield</p>
+                </div>
+            </div>
+            <div class="system-status">
+                <div class="status-indicator">
+                    <span class="pulse-dot"></span>
+                    <span id="status-text">Shield Active</span>
+                </div>
+                <div class="divider"></div>
+                <div class="info-pill">
+                    <span class="label">Proxy Port:</span>
+                    <span class="val" id="info-port">8090</span>
+                </div>
+                <div class="info-pill">
+                    <span class="label">Mode:</span>
+                    <span class="val" id="info-mode">Loading...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Grid -->
+        <main class="dashboard-grid">
+            <!-- Counter Cards -->
+            <div class="counter-grid">
+                <div class="glass-card counter-card allowed">
+                    <div class="card-icon">🟢</div>
+                    <div class="card-info">
+                        <h3>Allowed Requests</h3>
+                        <p class="count" id="stat-allowed">0</p>
+                    </div>
+                </div>
+                <div class="glass-card counter-card blocked">
+                    <div class="card-icon">🔴</div>
+                    <div class="card-info">
+                        <h3>Blocked Requests</h3>
+                        <p class="count" id="stat-blocked">0</p>
+                    </div>
+                </div>
+                <div class="glass-card counter-card banned">
+                    <div class="card-icon">🚷</div>
+                    <div class="card-info">
+                        <h3>Active Banned IPs</h3>
+                        <p class="count" id="stat-banned">0</p>
+                    </div>
+                </div>
+                <div class="glass-card counter-card resources">
+                    <div class="card-icon">⚡</div>
+                    <div class="card-info">
+                        <h3>Nanolimiter RAM</h3>
+                        <p class="count" id="stat-ram">0.0 MB</p>
+                        <span class="subtext" id="stat-goroutines">Goroutines: 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts and Settings Row -->
+            <div class="row-2">
+                <!-- Real-time Chart -->
+                <div class="glass-card chart-container">
+                    <div class="card-header">
+                        <h2>📈 Live Traffic Metrics (RPS)</h2>
+                        <span class="live-indicator">LIVE</span>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="trafficChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Settings Card -->
+                <div class="glass-card settings-card">
+                    <h2>⚙️ Shield Configuration</h2>
+                    <form id="settings-form">
+                        <div class="form-group">
+                            <label for="input-rps">Requests Per Second (RPS Limit)</label>
+                            <div class="range-wrapper">
+                                <input type="range" id="input-rps" min="1" max="200" value="10">
+                                <span class="range-val" id="val-rps">10</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-rpm">Requests Per Minute (RPM Limit)</label>
+                            <div class="range-wrapper">
+                                <input type="range" id="input-rpm" min="10" max="2000" step="10" value="150">
+                                <span class="range-val" id="val-rpm">150</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-ban-duration">Auto-Ban Duration (Seconds)</label>
+                            <input type="number" id="input-ban-duration" min="5" max="86400" value="60">
+                        </div>
+
+                        <div class="form-group toggle-group">
+                            <label for="input-autoban">Enable Auto-Banning</label>
+                            <label class="switch">
+                                <input type="checkbox" id="input-autoban" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="btn-save">Save Settings</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Ban Lists, Simulator, Logs Row -->
+            <div class="row-3">
+                <!-- Ban List -->
+                <div class="glass-card bans-container">
+                    <div class="card-header">
+                        <h2>🚫 Banned IP Addresses</h2>
+                        <button class="btn btn-secondary btn-sm" id="btn-clear-bans">Unban All</button>
+                    </div>
+                    <div class="list-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>IP Address</th>
+                                    <th>Remaining Time</th>
+                                    <th>Reason</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bans-list-body">
+                                <tr>
+                                    <td colspan="4" class="empty-state">No banned IP addresses currently.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Attack Simulator -->
+                <div class="glass-card simulator-card">
+                    <h2>⚔️ DoS Attack Simulator</h2>
+                    <p class="card-desc">Sends simulated bot traffic to local endpoints to test Nanolimiter's rate-limiting and auto-ban mechanisms.</p>
+                    
+                    <div class="form-group">
+                        <label for="sim-rps">Attack Intensity (Requests/Sec)</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="sim-rps" min="10" max="300" step="10" value="80">
+                            <span class="range-val" id="val-sim-rps">80</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sim-duration">Attack Duration (Seconds)</label>
+                        <input type="number" id="sim-duration" min="5" max="300" value="30">
+                    </div>
+
+                    <div class="simulator-buttons">
+                        <button class="btn btn-danger w-full" id="btn-start-sim">Start Attack Simulation</button>
+                        <button class="btn btn-secondary w-full hidden" id="btn-stop-sim">Stop Simulation</button>
+                    </div>
+                    <div id="sim-status" class="sim-status-label text-center">Simulation idle.</div>
+                </div>
+
+                <!-- Real-time Security Log Terminal -->
+                <div class="glass-card logs-container">
+                    <div class="card-header">
+                        <h2>🛡️ Live Security Logs</h2>
+                        <div class="log-actions">
+                            <button class="btn btn-secondary btn-sm" id="btn-clear-logs">Clear Logs</button>
+                        </div>
+                    </div>
+                    <div class="terminal-view" id="log-terminal">
+                        <div class="terminal-row system">[SYSTEM] Listening to live traffic stream...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 20px 0;">
+            Created & Maintained by <a href="https://github.com/mesutozansoftware" target="_blank" style="color: var(--color-primary); text-decoration: none; font-weight: 500;">mesutozansoftware</a>
+        </footer>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

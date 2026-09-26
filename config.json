@@ -1,0 +1,12 @@
+{
+  "port": 8090,
+  "backend_url": "",
+  "rate_limit_rps": 10,
+  "rate_limit_rpm": 150,
+  "ban_duration_seconds": 60,
+  "auto_ban_enabled": true,
+  "whitelist": [
+    "127.0.0.1"
+  ],
+  "blacklist": []
+}
