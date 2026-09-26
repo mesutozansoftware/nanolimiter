@@ -33,13 +33,13 @@ Client/Attacker ──> HTTP Requests ──> [ Nanolimiter Proxy ] ── (Clea
 ## 🚀 Getting Started
 
 ### Prerequisites
-- **Go 1.16 or higher** installed.
+- **Go 1.26.4 or higher** installed.
 
 ### Installation & Build
 
 1. Clone the repository or navigate to the project directory:
    ```bash
-   git clone https://github.com/mesutozan/nanolimiter.git
+   git clone https://github.com/mesutozansoftware/nanolimiter.git
    cd nanolimiter
    ```
 
