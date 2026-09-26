@@ -1,0 +1,8 @@
+   # Binaries
+   nanolimiter
+   nanolimiter-linux
+   nanolimiter-windows.exe
+
+   # Operating System files
+   .DS_Store
+   Thumbs.db
